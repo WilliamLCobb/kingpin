@@ -49,6 +49,19 @@
     return (self.annotations.count > 1);
 }
 
+- (NSUInteger)hash {
+    return self.annotations.count + (NSInteger)(self.coordinate.latitude + self.coordinate.longitude * 10000);
+}
+
+- (BOOL)isEqual:(KPAnnotation *)other {
+    if (![other isKindOfClass:[KPAnnotation class]]) {
+        return NO;
+    }
+    return  (fabs(other.coordinate.latitude - self.coordinate.latitude) < 0.00001 &&
+             fabs(other.coordinate.longitude - self.coordinate.longitude) < 0.00001 &&
+             other.annotations.count == self.annotations.count);
+}
+
 #pragma mark - Private
 
 - (void)calculateValues {

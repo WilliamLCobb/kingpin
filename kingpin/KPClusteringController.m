@@ -101,9 +101,9 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
 }
 
 - (void)setAnnotations:(NSArray *)annotations {
-    [self.mapView removeAnnotations:self.currentAnnotations];
-
     self.annotationTree = [[KPAnnotationTree alloc] initWithAnnotations:annotations];
+    
+    //[self.mapView removeAnnotations:self.currentAnnotations];
 
     [self updateVisibleMapAnnotationsOnMapView:NO];
 }
@@ -297,13 +297,34 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
     }
 
     else {
-        [self.mapView removeAnnotations:oldClusters];
-        [self.mapView addAnnotations:newClusters];
-
+//        NSLog(@"Removing: %@", oldClusters);
+//        NSLog(@"Adding: %@", newClusters);
+//        [self.mapView removeAnnotations:oldClusters];
+//        [self.mapView addAnnotations:newClusters];
+        
+        NSMutableArray *clustersToRemove = [NSMutableArray arrayWithArray:oldClusters];
+        [clustersToRemove removeObjectsInArray:newClusters];
+        
+        NSMutableArray *clustersToAdd = [NSMutableArray arrayWithArray:newClusters];
+        [clustersToAdd removeObjectsInArray:oldClusters];
+        
+        [self.mapView removeAnnotations:clustersToRemove];
+        [self.mapView addAnnotations:clustersToAdd];
+        
         if ([self.delegate respondsToSelector:@selector(clusteringControllerDidUpdateVisibleMapAnnotations:)]) {
             [self.delegate clusteringControllerDidUpdateVisibleMapAnnotations:self];
         }
     }
+}
+
+// In testing
+- (NSArray *)spliceArray:(NSMutableArray *)array chunkSize:(NSInteger)chunkSize
+{
+    NSMutableArray * arraySlices = [NSMutableArray new];
+    for (NSInteger i = 0; i < array.count; i += chunkSize) {
+        [arraySlices addObject:[array subarrayWithRange:NSMakeRange(i,  MIN(i + chunkSize, array.count))]];
+    }
+    return arraySlices;
 }
 
 - (void)animateCluster:(KPAnnotation *)cluster
