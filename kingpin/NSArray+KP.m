@@ -23,7 +23,11 @@
     __block NSMutableArray *array = [NSMutableArray array];
     
     [self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [array addObject:block(obj)];
+        if ([obj isKindOfClass:[NSArray class]]) {
+            [array addObjectsFromArray:obj];
+        } else {
+            [array addObject:block(obj)];
+        }
     }];
     
     return array;
