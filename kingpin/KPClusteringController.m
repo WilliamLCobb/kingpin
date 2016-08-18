@@ -101,11 +101,12 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
 }
 
 - (void)setAnnotations:(NSArray *)annotations {
+    
     NSMutableSet *oldAnnotations = [self.annotationTree.annotations mutableCopy];
     self.annotationTree = [[KPAnnotationTree alloc] initWithAnnotations:annotations];
     
     [oldAnnotations minusSet:self.annotationTree.annotations];
-    
+        
     NSArray *clustersToRemove = [self.mapView.annotations kp_filter:^BOOL(KPAnnotation *annotation) {
         if ([annotation isKindOfClass:[KPAnnotation class]]) {
             return [oldAnnotations intersectsSet:annotation.annotations];
@@ -115,6 +116,7 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
     }];
     
     [self.mapView removeAnnotations:clustersToRemove];
+    
 
     [self updateVisibleMapAnnotationsOnMapView:NO];
 }
@@ -311,8 +313,8 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
         // Old way
         //NSLog(@"Removing: %@", oldClusters);
         //NSLog(@"Adding: %@", newClusters);
-        [self.mapView removeAnnotations:oldClusters];
-        [self.mapView addAnnotations:newClusters];
+        //[self.mapView removeAnnotations:oldClusters];
+        //[self.mapView addAnnotations:newClusters];
         
         NSMutableArray *clustersToRemove = [NSMutableArray arrayWithArray:oldClusters];
         [clustersToRemove removeObjectsInArray:newClusters];

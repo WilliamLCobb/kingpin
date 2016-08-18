@@ -38,7 +38,7 @@
 
 - (id)initWithMapView:(MKMapView *)mapView;
 - (id)initWithMapView:(MKMapView *)mapView clusteringAlgorithm:(id<KPClusteringAlgorithm>)algorithm;
-- (void)setAnnotations:(NSArray *)annoations;
+- (void)setAnnotations:(NSArray *)annotations;
 
 /**
  *  Refreshes the map annotations. This will check if the map is visible and if the viewport has changed
