@@ -114,7 +114,6 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
             return NO;
         }
     }];
-    2
     [self.mapView removeAnnotations:clustersToRemove];
 
     [self updateVisibleMapAnnotationsOnMapView:NO];
