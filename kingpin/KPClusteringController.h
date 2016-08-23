@@ -17,12 +17,15 @@
 #import <Foundation/Foundation.h>
 
 #import "KPClusteringAlgorithm.h"
+#import "KPAnnotationTree.h"
 
 @class KPAnnotation;
 
 @protocol KPClusteringControllerDelegate;
 
 @interface KPClusteringController : NSObject
+
+@property (strong, nonatomic, readonly) KPAnnotationTree *annotationTree;
 
 /// these are ignored if the delegate implements -clusteringController:performAnimations:withCompletionHandler:
 @property (assign, nonatomic) CGFloat animationDuration;

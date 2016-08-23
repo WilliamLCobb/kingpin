@@ -19,7 +19,6 @@
 #import "KPClusteringController.h"
 
 #import "KPAnnotation.h"
-#import "KPAnnotationTree.h"
 #import "KPGridClusteringAlgorithm.h"
 
 #import "NSArray+KP.h"
