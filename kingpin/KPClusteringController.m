@@ -119,16 +119,11 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
     
     
     if (animated) {
-        [MKMapView animateWithDuration:0.75
-                                 delay:0.5
-                usingSpringWithDamping:0.6
-                 initialSpringVelocity:10
-                               options:UIViewAnimationOptionCurveEaseIn animations:^{
-                                   [self.mapView removeAnnotations:clustersToRemove];
-                                   
-                               } completion:^(BOOL finished) {
-                                   [self updateVisibleMapAnnotationsOnMapView:animated];
-                               }];
+        [self executeAnimations:^{
+            [self.mapView removeAnnotations:clustersToRemove];
+        } completion:^(BOOL finished) {
+            [self updateVisibleMapAnnotationsOnMapView:animated];
+        }];
     } else {
         [self.mapView removeAnnotations:clustersToRemove];
         [self updateVisibleMapAnnotationsOnMapView:animated];
@@ -328,14 +323,11 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
         [clustersToAdd removeObjectsInArray:oldClusters];
         
         if (animated) {
-            [MKMapView animateWithDuration:0.75
-                                     delay:0.5
-                    usingSpringWithDamping:0.6
-                     initialSpringVelocity:10
-                                   options:UIViewAnimationOptionCurveEaseIn animations:^{
-                                       [self.mapView removeAnnotations:clustersToRemove];
-                                       [self.mapView addAnnotations:clustersToAdd];
-                                   } completion:nil];
+            [self executeAnimations:^{
+                [self.mapView removeAnnotations:clustersToRemove];
+                [self.mapView addAnnotations:clustersToAdd];
+            } completion:nil];
+            
         } else {
             [self.mapView removeAnnotations:clustersToRemove];
             [self.mapView addAnnotations:clustersToAdd];
