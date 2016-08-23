@@ -139,7 +139,6 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
     [self refresh:animated force:NO];
 }
 
-
 -(void)refresh:(BOOL)animated force:(BOOL)force {
     // Check if map is visible
     if (self.mapView.visibleMapRect.size.width  == 0 ||
