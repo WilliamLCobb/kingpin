@@ -17,12 +17,15 @@
 #import <Foundation/Foundation.h>
 
 #import "KPClusteringAlgorithm.h"
+#import "KPAnnotationTree.h"
 
 @class KPAnnotation;
 
 @protocol KPClusteringControllerDelegate;
 
 @interface KPClusteringController : NSObject
+
+@property (strong, nonatomic, readonly) KPAnnotationTree *annotationTree;
 
 /// these are ignored if the delegate implements -clusteringController:performAnimations:withCompletionHandler:
 @property (assign, nonatomic) CGFloat animationDuration;
@@ -38,7 +41,9 @@
 
 - (id)initWithMapView:(MKMapView *)mapView;
 - (id)initWithMapView:(MKMapView *)mapView clusteringAlgorithm:(id<KPClusteringAlgorithm>)algorithm;
+
 - (void)setAnnotations:(NSArray *)annotations;
+- (void)setAnnotations:(NSArray *)annotations animated:(BOOL)animated;
 
 /**
  *  Refreshes the map annotations. This will check if the map is visible and if the viewport has changed

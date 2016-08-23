@@ -19,7 +19,6 @@
 #import "KPClusteringController.h"
 
 #import "KPAnnotation.h"
-#import "KPAnnotationTree.h"
 #import "KPGridClusteringAlgorithm.h"
 
 #import "NSArray+KP.h"
@@ -101,12 +100,15 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
 }
 
 - (void)setAnnotations:(NSArray *)annotations {
-    
+    [self setAnnotations:annotations animated:NO];
+}
+
+- (void)setAnnotations:(NSArray *)annotations animated:(BOOL)animated {
     NSMutableSet *oldAnnotations = [self.annotationTree.annotations mutableCopy];
     self.annotationTree = [[KPAnnotationTree alloc] initWithAnnotations:annotations];
     
     [oldAnnotations minusSet:self.annotationTree.annotations];
-        
+    
     NSArray *clustersToRemove = [self.mapView.annotations kp_filter:^BOOL(KPAnnotation *annotation) {
         if ([annotation isKindOfClass:[KPAnnotation class]]) {
             return [oldAnnotations intersectsSet:annotation.annotations];
@@ -114,15 +116,23 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
             return NO;
         }
     }];
-    [self.mapView removeAnnotations:clustersToRemove];
-
-    [self updateVisibleMapAnnotationsOnMapView:NO];
+    
+    
+    if (animated) {
+        [self executeAnimations:^{
+            [self.mapView removeAnnotations:clustersToRemove];
+        } completion:^(BOOL finished) {
+            [self updateVisibleMapAnnotationsOnMapView:animated];
+        }];
+    } else {
+        [self.mapView removeAnnotations:clustersToRemove];
+        [self updateVisibleMapAnnotationsOnMapView:animated];
+    }
 }
 
 - (void)refresh:(BOOL)animated {
     [self refresh:animated force:NO];
 }
-
 
 -(void)refresh:(BOOL)animated force:(BOOL)force {
     // Check if map is visible
@@ -305,23 +315,23 @@ typedef NS_ENUM(NSInteger, KPClusteringControllerMapViewportChangeState) {
                 [self.delegate clusteringControllerDidUpdateVisibleMapAnnotations:self];
             }
         });
-    }
-
-    else {
-        // Old way
-        //NSLog(@"Removing: %@", oldClusters);
-        //NSLog(@"Adding: %@", newClusters);
-        //[self.mapView removeAnnotations:oldClusters];
-        //[self.mapView addAnnotations:newClusters];
-        
+    }  else {
         NSMutableArray *clustersToRemove = [NSMutableArray arrayWithArray:oldClusters];
         [clustersToRemove removeObjectsInArray:newClusters];
         
         NSMutableArray *clustersToAdd = [NSMutableArray arrayWithArray:newClusters];
         [clustersToAdd removeObjectsInArray:oldClusters];
         
-        [self.mapView removeAnnotations:clustersToRemove];
-        [self.mapView addAnnotations:clustersToAdd];
+        if (animated) {
+            [self executeAnimations:^{
+                [self.mapView removeAnnotations:clustersToRemove];
+                [self.mapView addAnnotations:clustersToAdd];
+            } completion:nil];
+            
+        } else {
+            [self.mapView removeAnnotations:clustersToRemove];
+            [self.mapView addAnnotations:clustersToAdd];
+        }
         
         if ([self.delegate respondsToSelector:@selector(clusteringControllerDidUpdateVisibleMapAnnotations:)]) {
             [self.delegate clusteringControllerDidUpdateVisibleMapAnnotations:self];
